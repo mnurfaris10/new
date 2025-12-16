@@ -4,71 +4,52 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Checkout – Matchalant</title>
+
 <style>
-:root{--orange:#ff5a00;--cream:#fff2e5;--dark:#2b2b2b}
-body{margin:0;font-family:Arial,sans-serif;background:var(--cream);color:var(--dark)}
-header{background:var(--orange);color:#fff;padding:20px;text-align:center;font-weight:bold}
+body{margin:0;font-family:Arial,sans-serif;background:#fff2e5}
+header{background:#ff5a00;color:#fff;padding:20px;text-align:center}
 .container{max-width:600px;margin:20px auto;padding:16px}
-.card{background:#fff;border-radius:18px;box-shadow:0 6px 14px rgba(0,0,0,.15);overflow:hidden;margin-bottom:16px;display:flex;align-items:center}
-.card img{width:100px;height:100px;object-fit:cover;border-radius:12px;margin-right:16px}
-.card-body{flex:1}
-.item-name{font-weight:bold;font-size:16px}
-.price{color:var(--orange);font-weight:bold;margin:6px 0}
-.qty{margin-top:6px}
-.footer{position:sticky;bottom:0;background:#fff;padding:16px;box-shadow:0 -4px 10px rgba(0,0,0,.15);display:flex;justify-content:space-between;align-items:center}
+.item{display:flex;gap:12px;background:#fff;border-radius:12px;
+      margin-bottom:12px;padding:10px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+.item img{width:80px;height:80px;object-fit:cover;border-radius:8px}
+.total{font-size:18px;font-weight:bold;text-align:right;margin-top:20px}
 </style>
 </head>
-<body>
-<header>Checkout</header>
-<div class="container" id="menu"></div>
-<div class="footer">
-  <div><b>Grand Total:</b> MYR <span id="grandTotal">0</span></div>
-</div>
 
-<!-- WhatsApp button (same as cart.html) -->
-<div style="text-align:center; margin-top:20px;">
-  <a href="https://wa.me/60176139572" target="_blank" style="display:inline-block; padding:10px 20px; background-color:#25D366; color:white; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px;">
-    Chat WhatsApp
+<body>
+<header>Order Summary</header>
+
+<div class="container" id="orderList"></div>
+<div class="container total">
+  Grand Total: MYR <span id="total">0</span>
+</div>
+<div style="text-align:center; margin:20px;">
+  <a href="https://wa.me/60176139572" target="_blank"
+     style="display:inline-block;padding:10px 20px;background:#25D366;color:white;
+     border-radius:8px;text-decoration:none;font-weight:bold;">
+     Chat WhatsApp
   </a>
 </div>
 
 <script>
-const menuItems=[
-  {name:'Matcha Latte',price:8,img:'matcha.jpg'},
-  {name:'Strawberry Matcha',price:10,img:'m.strawberry.jpg'},
-  {name:'Beng-Beng Matcha Latte',price:11,img:'beng.jpg'},
-  {name:'Latte Ice',price:7,img:'icelatte.jpg'},
-  {name:'Beng-Beng Latte',price:5,img:'beng.jpg'},
-  {name:'Strawberry Beng-Beng',price:6,img:'s.beng.jpg'}
-];
+let cart = JSON.parse(localStorage.getItem("cartItems")) || [];
+let total = localStorage.getItem("grandTotal") || 0;
 
-// Load cart from localStorage
-let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
+let html = '';
+cart.forEach(i=>{
+  html += `
+  <div class="item">
+    <img src="${i.img}">
+    <div>
+      <b>${i.name}</b><br>
+      Qty: ${i.qty}<br>
+      MYR ${i.price * i.qty}
+    </div>
+  </div>`;
+});
 
-function render(){
-  let html = '';
-  cart.forEach(item => {
-    html += `<div class='card'>
-      <img src='${item.img}'>
-      <div class='card-body'>
-        <div class='item-name'>${item.name}</div>
-        <div class='price'>MYR ${item.price}</div>
-        <div class='qty'>Qty: ${item.qty}</div>
-      </div>
-    </div>`;
-  });
-  document.getElementById('menu').innerHTML = html;
-  updateTotal();
-}
-
-function updateTotal(){
-  let total = 0;
-  cart.forEach(i => total += i.price * i.qty);
-  document.getElementById('grandTotal').innerText = total;
-  localStorage.setItem('grandTotal', total);
-}
-
-render();
+document.getElementById("orderList").innerHTML = html;
+document.getElementById("total").innerText = total;
 </script>
 </body>
 </html>
