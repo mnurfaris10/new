@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Matchalant – Menu</title>
+
 <style>
 :root{--orange:#ff5a00;--cream:#fff2e5;--dark:#2b2b2b}
 body{margin:0;font-family:Arial,sans-serif;background:var(--cream);color:var(--dark)}
@@ -21,72 +22,79 @@ input[type=number]{width:70px;padding:6px;border-radius:8px;border:1px solid #cc
 button{background:var(--orange);color:#fff;border:none;padding:14px 26px;border-radius:30px;font-size:16px;cursor:pointer}
 </style>
 </head>
+
 <body>
 <header>Matchalant Menu</header>
+
 <div class="container">
   <div class="menu-grid" id="menu"></div>
 </div>
+
 <div class="footer">
   <div><b>Grand Total:</b> MYR <span id="grandTotal">0</span></div>
   <button onclick="checkout()">Checkout</button>
 </div>
 
-<!-- WhatsApp button (original, tak ubah) -->
-<div style="text-align:center; margin-top:20px;">
-  <a href="https://wa.me/60176139572" target="_blank" style="display:inline-block; padding:10px 20px; background-color:#25D366; color:white; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px;">
-    Chat WhatsApp
-  </a>
-</div>
+
 
 <script>
-const menuItems=[
-  {name:'Matcha Latte',price:8,img:'matcha.jpg'},
-  {name:'Strawberry Matcha',price:10,img:'m.strawberry.jpg'},
-  {name:'Beng-Beng Matcha Latte',price:11,img:'beng.jpg'},
-  {name:'Latte Ice',price:7,img:'icelatte.jpg'},
-  {name:'Beng-Beng Latte',price:5,img:'beng.jpg'},
-  {name:'Strawberry Beng-Beng',price:6,img:'s.beng.jpg'}
+const menuItems = [
+  {name:'Matcha Latte', price:8, img:'matcha.jpg'},
+  {name:'Strawberry Matcha', price:10, img:'m.strawberry.jpg'},
+  {name:'Beng-Beng Matcha Latte', price:11, img:'beng.jpg'},
+  {name:'Latte Ice', price:7, img:'icelatte.jpg'},
+  {name:'Beng-Beng Latte', price:5, img:'beng.jpg'},
+  {name:'Strawberry Beng-Beng', price:6, img:'s.beng.jpg'}
 ];
 
-// Persistent cart
 let cart = JSON.parse(localStorage.getItem('cartItems')) || [];
 
 function render(){
   let html = '';
-  menuItems.forEach(item => {
-    let found = cart.find(c => c.name === item.name);
+  menuItems.forEach(item=>{
+    let found = cart.find(c=>c.name===item.name);
     let qty = found ? found.qty : 0;
-    html += `<div class='card'>
-      <img src='${item.img}'>
-      <div class='card-body'>
-        <div class='item-name'>${item.name}</div>
-        <div class='price'>MYR ${item.price}</div>
-        <div class='qty'>Qty <input type='number' min='0' value='${qty}' onchange='updateCart("${item.name}",${item.price},this.value)'></div>
+
+    html += `
+    <div class="card">
+      <img src="${item.img}">
+      <div class="card-body">
+        <div class="item-name">${item.name}</div>
+        <div class="price">MYR ${item.price}</div>
+        <div class="qty">
+          Qty
+          <input type="number" min="0" value="${qty}"
+            onchange="updateCart('${item.name}', ${item.price}, '${item.img}', this.value)">
+        </div>
       </div>
     </div>`;
   });
-  document.getElementById('menu').innerHTML = html;
+
+  document.getElementById("menu").innerHTML = html;
   updateTotal();
 }
 
-function updateCart(name, price, qty){
-  qty = parseInt(qty);
-  cart = cart.filter(i => i.name !== name);
-  if(qty > 0) cart.push({name, price, qty});
-  localStorage.setItem('cartItems', JSON.stringify(cart));
+function updateCart(name, price, img, qty){
+  qty = parseInt(qty) || 0;
+  cart = cart.filter(i=>i.name!==name);
+
+  if(qty>0){
+    cart.push({name, price, qty, img});
+  }
+
+  localStorage.setItem("cartItems", JSON.stringify(cart));
   updateTotal();
 }
 
 function updateTotal(){
   let total = 0;
-  cart.forEach(i => total += i.price * i.qty);
-  document.getElementById('grandTotal').innerText = total;
-  localStorage.setItem('grandTotal', total);
+  cart.forEach(i=> total += i.price * i.qty);
+  document.getElementById("grandTotal").innerText = total;
+  localStorage.setItem("grandTotal", total);
 }
 
 function checkout(){
-  updateTotal();
-  window.location='checkout.html';
+  window.location = "checkout.html";
 }
 
 render();
